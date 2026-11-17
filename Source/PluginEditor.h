@@ -1,8 +1,8 @@
 #pragma once
 #include "PluginProcessor.h"
 
-namespace yl { // palette
-    const juce::Colour cream (0xfffff4f1), pink (0xffff8fb1), deep (0xffe0507f), cocoa (0xff3a2a2a), ink (0xff1c1416), blush (0xffffd9e3);
+namespace yl { // palette from the original YOLO HTML interface
+    const juce::Colour ink (0xff09090c), panel (0xff141419), line (0xff303039), white (0xfff5f5f8), muted (0xff92929e), pink (0xffff9fc4), cream (0xff202027), deep (0xff6d344c), cocoa (0xff24242c), blush (0xffffc9dd);
 }
 
 class YoloLook : public juce::LookAndFeel_V4
