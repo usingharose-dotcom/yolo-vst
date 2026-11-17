@@ -10,6 +10,9 @@ else()
     FetchContent_MakeAvailable(juce)
 endif()
 
+# Bundle the user's original HTML as a resource inside the VST3.
+juce_add_binary_data(YoloAssets SOURCES Assets/index.html)
+
 juce_add_plugin(Yolo
     COMPANY_NAME "Yolo"
     PLUGIN_MANUFACTURER_CODE Yolo
@@ -17,20 +20,20 @@ juce_add_plugin(Yolo
     FORMATS VST3
     PRODUCT_NAME "Yolo"
     IS_SYNTH FALSE NEEDS_MIDI_INPUT FALSE NEEDS_MIDI_OUTPUT FALSE
-    VST3_CATEGORIES Fx Pitch\ Shift
+    VST3_CATEGORIES Fx Pitch\\ Shift
     COPY_PLUGIN_AFTER_BUILD FALSE)
 
 target_sources(Yolo PRIVATE Source/PluginProcessor.cpp Source/PluginEditor.cpp)
 target_include_directories(Yolo PRIVATE Source)
 target_compile_definitions(Yolo PUBLIC
-    JUCE_WEB_BROWSER=0 JUCE_USE_CURL=0 JUCE_VST3_CAN_REPLACE_VST2=0 JUCE_DISPLAY_SPLASH_SCREEN=0
+    JUCE_WEB_BROWSER=1 JUCE_USE_WIN_WEBVIEW2=1 JUCE_USE_CURL=0 JUCE_VST3_CAN_REPLACE_VST2=0 JUCE_DISPLAY_SPLASH_SCREEN=0
     JUCE_REPORT_APP_USAGE=0 JUCE_STRICT_REFCOUNTEDPOINTER=1)
 target_link_libraries(Yolo PRIVATE
-    juce::juce_audio_utils juce::juce_dsp
+    YoloAssets
+    juce::juce_audio_utils juce::juce_dsp juce::juce_gui_extra
     PUBLIC juce::juce_recommended_config_flags juce::juce_recommended_warning_flags)
 
 if(UNIX AND NOT APPLE)
-    # allow building on minimal Linux boxes / CI without every dev header
     target_compile_definitions(Yolo PUBLIC JUCE_USE_XRANDR=0 JUCE_USE_XINERAMA=0 JUCE_USE_XSHM=0
         JUCE_USE_XRENDER=0 JUCE_USE_XCURSOR=0 JUCE_JACK=0 JUCE_ALSA=0)
 endif()
