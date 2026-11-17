@@ -11,8 +11,13 @@ jobs:
       - name: Linux deps
         if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install -y libasound2-dev libx11-dev libxrandr-dev libxinerama-dev libxcursor-dev libfreetype-dev libfontconfig1-dev libgl1-mesa-dev libcurl4-openssl-dev
+      - name: Install WebView2 SDK
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          nuget install Microsoft.Web.WebView2 -Version 1.0.1901.177 -OutputDirectory "${{ runner.temp }}\\nuget"
       - name: Configure
-        run: cmake -B build -DCMAKE_BUILD_TYPE=Release ${{ runner.os == 'macOS' && '-DCMAKE_OSX_ARCHITECTURES="arm64;x86_64"' || '' }}
+        run: cmake -B build -DCMAKE_BUILD_TYPE=Release ${{ runner.os == 'Windows' && format('-DJUCE_WEBVIEW2_PACKAGE_LOCATION="{0}\\nuget"', runner.temp) || '' }} ${{ runner.os == 'macOS' && '-DCMAKE_OSX_ARCHITECTURES="arm64;x86_64"' || '' }}
       - name: Build
         run: cmake --build build --config Release --parallel
       - uses: actions/upload-artifact@v4
